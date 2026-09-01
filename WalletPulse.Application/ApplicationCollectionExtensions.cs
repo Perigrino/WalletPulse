@@ -14,5 +14,5 @@ public static class ApplicationCollectionExtensions
         service.AddScoped<ICustomerWalletService, CustomerWalletService>();
         return service;
     }
-    
+
 }

@@ -29,7 +29,7 @@ public class CustomerController :Controller
         };
         return Ok(customerResponse);
     }
-    
+
     //GET CustomerById
     [HttpGet(ApiEndpoints.Customers.Get)]
     public async Task<IActionResult> Get([FromRoute] Guid id, CancellationToken token)
@@ -43,7 +43,7 @@ public class CustomerController :Controller
                 Message = "Customer not found."
             });
         }
-        
+
         var customerResponse = new FinalResponse<CustomerResponse>
         {
             StatusCode = 200,
@@ -52,33 +52,8 @@ public class CustomerController :Controller
         };
         return Ok(customerResponse);
     }
-    
-    
-    //GET CustomerById
-    // [HttpGet(ApiEndpoints.Customers.GetWallet)]
-    // public async Task<IActionResult> GetWalletsByCustomerId([FromRoute] Guid id)
-    // {
-    //     var customer = await _customerRepository.GetWalletByCustomerId(id);
-    //     if (customer == null)
-    //     {
-    //         return NotFound(new FinalResponse<object>
-    //         {
-    //             StatusCode = 404,
-    //             Message = "Customer not found."
-    //         });
-    //     }
-    //     
-    //     var customerResponse = new FinalResponse<object>
-    //     {
-    //         StatusCode = 200,
-    //         Message = "Customer retrieved successfully.",
-    //         Data = customer.MapsToResponse()
-    //     };
-    //     return Ok(customerResponse);
-    // }
-    
+
     //POST Customer
-    
     [HttpPost(ApiEndpoints.Customers.Create)]
     public async Task<IActionResult> CreateCustomer([FromBody] CreateCustomerRequest request, CancellationToken token)
     {
@@ -90,7 +65,7 @@ public class CustomerController :Controller
         {
             return BadRequest(new FinalResponse<object> { StatusCode = 400, Message = "Validation failed.", Data = ModelState });
         }
-        
+
         var mapToCustomer = request.MapToCustomer();
         await _customerRepository.CreateCustomer(mapToCustomer ?? throw new InvalidOperationException(), token);
         var customerResponse = new FinalResponse<CustomerResponse>
@@ -101,7 +76,7 @@ public class CustomerController :Controller
         };
         return CreatedAtAction(nameof(Get), new { id = mapToCustomer.Id }, customerResponse);
     }
-    
+
     //UPDATE Customer
     [HttpPut(ApiEndpoints.Customers.Update)]
     public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateCustomerRequest request, CancellationToken token)
@@ -134,7 +109,7 @@ public class CustomerController :Controller
 
     }
 
-    //DELETE Customer 
+    //DELETE Customer
     [HttpDelete(ApiEndpoints.Customers.Delete)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken token)
     {
@@ -149,7 +124,7 @@ public class CustomerController :Controller
                 Data = null
             });
         }
-        
+
         return Ok(new FinalResponse<string>
             {
                 StatusCode = 200,
