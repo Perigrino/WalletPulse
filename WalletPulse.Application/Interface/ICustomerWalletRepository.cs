@@ -1,10 +1,14 @@
 using WalletPulse.Application.Model;
+using WalletPulse.Application.Repository;
 
 namespace WalletPulse.Application.Interface;
+
+public sealed record WalletFilter(string? Name, string? Type, string? AccountScheme, int Page, int PageSize);
 
 public interface ICustomerWalletRepository
 {
     Task<IEnumerable<CustomerWallet>> GetCustomerWalletsAsync(CancellationToken token = default);
+    Task<WalletQueryResult> GetCustomerWalletsPagedAsync(WalletFilter filter, CancellationToken token = default);
     Task<CustomerWallet?> GetWalletByWalletId(Guid walletId, CancellationToken token = default);
     Task<bool> CreateCustomerWallet(CustomerWallet wallet , CancellationToken token = default);
     Task<bool> UpdateCustomerWallet(CustomerWallet wallet , CancellationToken token = default);

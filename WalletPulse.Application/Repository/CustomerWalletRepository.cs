@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore.Query;
 
 namespace WalletPulse.Application.Repository;
 
+public sealed record WalletQueryResult(IReadOnlyList<CustomerWallet> Items, int TotalCount);
+
 public class CustomerWalletRepository : ICustomerWalletRepository
 {
     private readonly AppDbContext _context;
@@ -22,12 +24,41 @@ public class CustomerWalletRepository : ICustomerWalletRepository
         return wallet;
     }
 
+    public async Task<WalletQueryResult> GetCustomerWalletsPagedAsync(WalletFilter filter, CancellationToken token = default)
+    {
+        var page = Math.Max(1, filter.Page);
+        var pageSize = Math.Clamp(filter.PageSize, 1, 100);
+
+        var query = _context.CustomerWallets.AsNoTracking();
+        if (!string.IsNullOrWhiteSpace(filter.Name))
+        {
+            query = query.Where(w => w.WalletName.ToLower().Contains(filter.Name.ToLower()));
+        }
+        if (!string.IsNullOrWhiteSpace(filter.Type))
+        {
+            query = query.Where(w => w.Type == filter.Type);
+        }
+        if (!string.IsNullOrWhiteSpace(filter.AccountScheme))
+        {
+            query = query.Where(w => w.AccountScheme == filter.AccountScheme);
+        }
+
+        var totalCount = await query.CountAsync(cancellationToken: token);
+        var items = await query
+            .OrderByDescending(w => w.CreatedAt)
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync(cancellationToken: token);
+
+        return new WalletQueryResult(items, totalCount);
+    }
+
     public async Task<CustomerWallet?> GetWalletByWalletId(Guid walletId , CancellationToken token = default)
     {
         return await _context.CustomerWallets
             .FirstOrDefaultAsync(wallet => wallet.Id == walletId, cancellationToken: token);
     }
-    
+
     public async Task<bool> CreateCustomerWallet(CustomerWallet wallet , CancellationToken token = default)
     {
         var newWallet = new CustomerWallet
@@ -93,8 +124,7 @@ public class CustomerWalletRepository : ICustomerWalletRepository
 
     public async Task<CustomerWallet?> ApplyMovementAsync(Guid walletId, TransactionType type, decimal amount, string? reference, CancellationToken token = default)
     {
-        var wallet = await _context.CustomerWallets
-            .FirstOrDefaultAsync(w => w.Id == walletId, cancellationToken: token);
+        var wallet = await _context.CustomerWallets.FirstOrDefaultAsync(w => w.Id == walletId, cancellationToken: token);
         if (wallet == null)
         {
             return null;
