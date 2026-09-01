@@ -11,9 +11,9 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-builder.Services.AddScoped<ICustomerWalletRepository, CustomerWalletRepository>();
-builder.Services.AddScoped<ICustomerWalletService, CustomerWalletService>();
+// builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
+// builder.Services.AddScoped<ICustomerWalletRepository, CustomerWalletRepository>();
+// builder.Services.AddScoped<ICustomerWalletService, CustomerWalletService>();
 
 builder.Services.AddApplication();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
