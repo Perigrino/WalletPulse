@@ -22,12 +22,11 @@ public class CustomerRepository : ICustomerRepository
         return customers;
     }
 
-    public async Task<Customer> GetCustomerById(Guid id, CancellationToken token = default)
+    public async Task<Customer?> GetCustomerById(Guid id, CancellationToken token = default)
     {
-        var result = await _context.Customers
+        return await _context.Customers
             .Include(wallets => wallets.CustomerWallets)
             .FirstOrDefaultAsync(c => c.Id == id, cancellationToken: token);
-        return result ?? throw new InvalidOperationException();
     }
 
     // public async Task<CustomerWallet> GetWalletByCustomerId(Guid id)
