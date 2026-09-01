@@ -22,11 +22,10 @@ public class CustomerWalletRepository : ICustomerWalletRepository
         return wallet;
     }
 
-    public async Task<CustomerWallet> GetWalletByWalletId(Guid walletId , CancellationToken token = default)
+    public async Task<CustomerWallet?> GetWalletByWalletId(Guid walletId , CancellationToken token = default)
     {
-        var result = await _context.CustomerWallets
+        return await _context.CustomerWallets
             .FirstOrDefaultAsync(wallet => wallet.Id == walletId, cancellationToken: token);
-        return result ?? throw new InvalidOperationException();
     }
     
     public async Task<bool> CreateCustomerWallet(CustomerWallet wallet , CancellationToken token = default)
@@ -50,7 +49,10 @@ public class CustomerWalletRepository : ICustomerWalletRepository
     {
         var result = await _context.CustomerWallets
             .FirstOrDefaultAsync(id => id.Id == wallet.Id, cancellationToken: token);
-        if (result != null)
+        if (result == null)
+        {
+            return false;
+        }
         {
             result.WalletName = wallet.WalletName;
             result.Type = wallet.Type;
