@@ -9,5 +9,6 @@ public class CustomerWalletResponse
     public required string AccountScheme { get; set; }
     public required DateTime CreatedAt { get; set; }
     public required string Owner { get; set; }
+    public decimal Balance { get; set; }
     public Guid CustomerId { get; set; }
 }

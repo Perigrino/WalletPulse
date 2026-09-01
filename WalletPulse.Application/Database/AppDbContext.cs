@@ -17,10 +17,33 @@ public class AppDbContext : DbContext
             .HasMany(u => u.CustomerWallets)
             .WithOne(w => w.Customer)
             .HasForeignKey(w => w.CustomerId);
+
+        modelBuilder.Entity<CustomerWallet>()
+            .Property(w => w.Balance)
+            .HasPrecision(18, 2);
+
+        modelBuilder.Entity<Transaction>()
+            .HasOne<CustomerWallet>()
+            .WithMany()
+            .HasForeignKey(t => t.WalletId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<Transaction>()
+            .Property(t => t.Type)
+            .HasConversion<string>()
+            .HasMaxLength(20);
+
+        modelBuilder.Entity<Transaction>()
+            .HasIndex(t => new { t.WalletId, t.CreatedAt });
+
+        modelBuilder.Entity<Transaction>()
+            .Property(t => t.Amount)
+            .HasPrecision(18, 2);
     }
 
     public DbSet<Customer> Customers { get; set; }
     public DbSet<CustomerWallet> CustomerWallets { get; set; }
+    public DbSet<Transaction> Transactions { get; set; }
 }
 
 

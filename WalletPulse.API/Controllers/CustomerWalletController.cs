@@ -1,4 +1,5 @@
 using WalletPulse.Application.Interface;
+using WalletPulse.Application.Model;
 using WalletPulse.ContractMappings;
 using WalletPulse.Contracts.Request;
 using WalletPulse.Contracts.Response;
@@ -158,5 +159,71 @@ public class CustomerWalletController : Controller
                 Message = "Customer wallet deleted successfully",
                 Data = null
             });
+    }
+
+    //POST Deposit
+    [HttpPost(ApiEndpoints.CustomerWallet.Deposit)]
+    public async Task<IActionResult> Deposit(Guid id, [FromBody] WalletMovementRequest request, CancellationToken token)
+    {
+        var wallet = await _walletRepository.ApplyMovementAsync(id, TransactionType.Deposit, request.Amount, request.Reference, token);
+        if (wallet == null)
+        {
+            return NotFound(new FinalResponse<object> { StatusCode = 404, Message = "Wallet not found." });
+        }
+        return Ok(new FinalResponse<CustomerWalletResponse>
+        {
+            StatusCode = 200,
+            Message = "Deposit successful.",
+            Data = wallet.MapsToResponse()
+        });
+    }
+
+    //POST Withdraw
+    [HttpPost(ApiEndpoints.CustomerWallet.Withdraw)]
+    public async Task<IActionResult> Withdraw(Guid id, [FromBody] WalletMovementRequest request, CancellationToken token)
+    {
+        CustomerWallet? wallet;
+        try
+        {
+            wallet = await _walletRepository.ApplyMovementAsync(id, TransactionType.Withdrawal, request.Amount, request.Reference, token);
+        }
+        catch (InvalidOperationException ex) when (ex.Message == "Insufficient funds.")
+        {
+            return BadRequest(new FinalResponse<object>
+            {
+                StatusCode = 400,
+                Message = "Insufficient funds.",
+                Data = null
+            });
+        }
+        if (wallet == null)
+        {
+            return NotFound(new FinalResponse<object> { StatusCode = 404, Message = "Wallet not found." });
+        }
+        return Ok(new FinalResponse<CustomerWalletResponse>
+        {
+            StatusCode = 200,
+            Message = "Withdrawal successful.",
+            Data = wallet.MapsToResponse()
+        });
+    }
+
+    //GET Transaction History
+    [HttpGet(ApiEndpoints.CustomerWallet.Transactions)]
+    public async Task<IActionResult> GetTransactions(Guid id, CancellationToken token)
+    {
+        var walletExists = await _walletRepository.WalletExists(id, token);
+        if (!walletExists)
+        {
+            return NotFound(new FinalResponse<object> { StatusCode = 404, Message = "Wallet not found." });
+        }
+        var transactions = await _walletRepository.GetWalletTransactionsAsync(id, token);
+        var response = new FinalResponse<IEnumerable<TransactionResponse>>
+        {
+            StatusCode = 200,
+            Message = "Transactions retrieved successfully.",
+            Data = transactions.Select(t => t.MapsToResponse())
+        };
+        return Ok(response);
     }
 }

@@ -11,6 +11,7 @@ public class CustomerWallet
     public required string AccountScheme { get; set; }
     public required DateTime CreatedAt { get; set; }
     public required string Owner { get; set; }
+    public decimal Balance { get; set; }
     public Guid CustomerId { get; set; }
     [JsonIgnore] public Customer? Customer { get; set; }
 

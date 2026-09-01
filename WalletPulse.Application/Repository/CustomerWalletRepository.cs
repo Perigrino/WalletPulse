@@ -91,6 +91,40 @@ public class CustomerWalletRepository : ICustomerWalletRepository
         return wallet;
     }
 
+    public async Task<CustomerWallet?> ApplyMovementAsync(Guid walletId, TransactionType type, decimal amount, string? reference, CancellationToken token = default)
+    {
+        var wallet = await _context.CustomerWallets
+            .FirstOrDefaultAsync(w => w.Id == walletId, cancellationToken: token);
+        if (wallet == null)
+        {
+            return null;
+        }
+        if (type == TransactionType.Withdrawal && amount > wallet.Balance)
+        {
+            throw new InvalidOperationException("Insufficient funds.");
+        }
+        wallet.Balance += type == TransactionType.Deposit ? amount : -amount;
+        _context.Transactions.Add(new Transaction
+        {
+            Id = Guid.NewGuid(),
+            WalletId = walletId,
+            Type = type,
+            Amount = amount,
+            Reference = reference,
+            CreatedAt = DateTime.UtcNow
+        });
+        await _context.SaveChangesAsync(token);
+        return wallet;
+    }
+
+    public async Task<IEnumerable<Transaction>> GetWalletTransactionsAsync(Guid walletId, CancellationToken token = default)
+    {
+        return await _context.Transactions
+            .Where(t => t.WalletId == walletId)
+            .OrderByDescending(t => t.CreatedAt)
+            .ToListAsync(cancellationToken: token);
+    }
+
     public async Task<bool> Save(CancellationToken token = default)
     {
         var saved =  await _context.SaveChangesAsync(token);

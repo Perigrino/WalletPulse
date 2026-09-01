@@ -24,6 +24,9 @@ public static class ApiEndpoints
         public const string Create = Base;
         public const string Update = $"{Base}/{{id:guid}}";
         public const string Delete = $"{Base}/{{id:guid}}";
+        public const string Deposit = $"{Base}/{{id:guid}}/deposit";
+        public const string Withdraw = $"{Base}/{{id:guid}}/withdraw";
+        public const string Transactions = $"{Base}/{{id:guid}}/transactions";
     }
     
 }
