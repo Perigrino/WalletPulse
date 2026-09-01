@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\WalletPulse.Application\WalletPulse.Application.csproj" />
+    <ProjectReference Include="..\WalletPulse.API\WalletPulse.API.csproj" />
   </ItemGroup>
 
 </Project>

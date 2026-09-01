@@ -1,31 +1,31 @@
-
 using System.Text.Json.Serialization;
 using FluentValidation;
 using WalletPulse.Application;
 using WalletPulse.Application.Database;
-using WalletPulse.Application.Interface;
-using WalletPulse.Application.Repository;
-using WalletPulse.Application.Service;
+using WalletPulse.Filters;
+using WalletPulse.Validators;
 using Microsoft.EntityFrameworkCore;
-
+using WalletPulse;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-// builder.Services.AddScoped<ICustomerWalletRepository, CustomerWalletRepository>();
-// builder.Services.AddScoped<ICustomerWalletService, CustomerWalletService>();
-
 builder.Services.AddApplication();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateCustomerRequestValidator>();
+builder.Services.AddScoped<ValidationFilter>();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("Default")));
-builder.Services.AddControllers().AddNewtonsoftJson(options => options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore); 
+builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>());
 builder.Services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
 {
     options.SerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
 });
 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddHealthChecks();
 
 
 var app = builder.Build();
@@ -37,10 +37,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseExceptionHandler();
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 app.Run();
