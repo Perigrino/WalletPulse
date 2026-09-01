@@ -16,8 +16,10 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
     {
         var method = httpContext.Request.Method.Replace("\r", "").Replace("\n", "");
         var path = httpContext.Request.Path.ToString().Replace("\r", "").Replace("\n", "");
+        var sanitizedMessage = exception.Message.Replace("\r", "").Replace("\n", "");
+        var sanitizedTrace = exception.StackTrace?.Replace("\r", "").Replace("\n", "");
 
-        _logger.LogError(exception, "Unhandled exception for {Method} {Path}", method, path);
+        _logger.LogError("Unhandled exception for {Method} {Path}: {Message} {Trace}", method, path, sanitizedMessage, sanitizedTrace);
 
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
         await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
