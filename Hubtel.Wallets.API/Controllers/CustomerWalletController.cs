@@ -103,7 +103,7 @@ public class CustomerWalletController : Controller
         return BadRequest(walletMaxedResponse);
     }
     
-    //UPDATE Customer
+    //UPDATE Customer Wallet
     [HttpPut(ApiEndpoints.CustomerWallet.Update)]
     public async Task<IActionResult> UpdateCustomerWallet([FromRoute] Guid id, [FromBody] UpdateCustomerWalletRequest request, CancellationToken token)
     {
@@ -135,7 +135,7 @@ public class CustomerWalletController : Controller
 
     }
 
-    //DELETE Customer 
+    //DELETE Customer Wallet
     [HttpDelete(ApiEndpoints.CustomerWallet.Delete)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken token)
     {
