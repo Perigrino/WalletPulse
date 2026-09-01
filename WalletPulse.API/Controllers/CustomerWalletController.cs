@@ -22,16 +22,29 @@ public class CustomerWalletController : Controller
     
     //GET all Wallets
     [HttpGet(ApiEndpoints.CustomerWallet.GetAll)]
-    public async Task<IActionResult> GetCustomerWallets(CancellationToken token)
+    public async Task<IActionResult> GetCustomerWallets(
+        CancellationToken token,
+        string? name = null, string? type = null, string? accountScheme = null,
+        int page = 1, int pageSize = 20)
     {
-        var wallets = await _walletRepository.GetCustomerWalletsAsync(token);
-        var walletResponse = new FinalResponse<CustomerWalletsResponse>
+        var filter = new WalletFilter(name, type, accountScheme, page, pageSize);
+        var result = await _walletRepository.GetCustomerWalletsPagedAsync(filter, token);
+        var totalPages = (int)Math.Ceiling(result.TotalCount / (double)Math.Clamp(pageSize, 1, 100));
+
+        var response = new FinalResponse<PagedResponse<CustomerWalletResponse>>
         {
             StatusCode = 200,
             Message = "Wallets retrieved successfully.",
-            Data = wallets.MapsToResponse()
+            Data = new PagedResponse<CustomerWalletResponse>
+            {
+                Items = result.Items.Select(w => w.MapsToResponse()),
+                Page = Math.Max(1, page),
+                PageSize = Math.Clamp(pageSize, 1, 100),
+                TotalCount = result.TotalCount,
+                TotalPages = totalPages
+            }
         };
-        return Ok(walletResponse);
+        return Ok(response);
     }
     
     //GET WalletByWalletsId
