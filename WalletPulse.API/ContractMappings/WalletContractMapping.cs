@@ -15,11 +15,10 @@ public static class WalletContractMapping
             Type = request.Type,
             AccountNumber = request.AccountNumber,
             AccountScheme = request.AccountScheme,
-            CreatedAt = request.CreatedAt,
+            CreatedAt = request.CreatedAt.ToUniversalTime(),
             Owner = request.Owner,
             CustomerId = request.CustomerId
         };
-    
     }
     
     public static CustomerWallet MapToWallet(this UpdateCustomerWalletRequest request, Guid id)  //This maps the UpdateCustomerWalletDto to CustomerWallet
@@ -31,11 +30,10 @@ public static class WalletContractMapping
             Type = request.Type,
             AccountNumber = request.AccountNumber,
             AccountScheme = request.AccountScheme,
-            CreatedAt = request.CreatedAt,
+            CreatedAt = request.CreatedAt.ToUniversalTime(),
             Owner = request.Owner,
             CustomerId = request.CustomerId
         };
-    
     }
     
     public static CustomerWalletResponse MapsToResponse(this CustomerWallet wallet) //This maps the Customer to CustomerResponse Dto

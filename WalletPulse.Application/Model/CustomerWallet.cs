@@ -9,7 +9,7 @@ public class CustomerWallet
     public required string Type { get; set; }
     public required string AccountNumber { get; set; }
     public required string AccountScheme { get; set; }
-    public required DateTime CreatedAt { get; set; }
+    public required DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public required string Owner { get; set; }
     public decimal Balance { get; set; }
     public Guid CustomerId { get; set; }

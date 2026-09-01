@@ -1,4 +1,5 @@
 using FluentValidation;
+using FluentValidation.Results;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 
@@ -6,11 +7,11 @@ namespace WalletPulse.Filters;
 
 public sealed class ValidationFilter : IAsyncActionFilter
 {
-    private readonly IValidatorFactory _validatorFactory;
+    private readonly IServiceProvider _serviceProvider;
 
-    public ValidationFilter(IValidatorFactory validatorFactory)
+    public ValidationFilter(IServiceProvider serviceProvider)
     {
-        _validatorFactory = validatorFactory;
+        _serviceProvider = serviceProvider;
     }
 
     public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
@@ -21,12 +22,9 @@ public sealed class ValidationFilter : IAsyncActionFilter
             {
                 continue;
             }
-            var validator = _validatorFactory.GetValidator(value.GetType());
-            if (validator is null)
-            {
-                continue;
-            }
-            var result = await validator.ValidateAsync(new ValidationContext<object>(value), context.HttpContext.RequestAborted);
+            var validateMethod = typeof(ValidatorHelper).GetMethod("Validate")!;
+            var generic = validateMethod.MakeGenericMethod(value.GetType());
+            var result = (ValidationResult)generic.Invoke(null, new object[] { _serviceProvider, value })!;
             if (!result.IsValid)
             {
                 context.Result = new BadRequestObjectResult(new ValidationProblemDetails(
@@ -37,5 +35,18 @@ public sealed class ValidationFilter : IAsyncActionFilter
             }
         }
         await next();
+    }
+}
+
+internal static class ValidatorHelper
+{
+    public static ValidationResult Validate<T>(IServiceProvider sp, T value)
+    {
+        var validator = sp.GetService(typeof(IValidator<T>));
+        if (validator is null)
+        {
+            return new ValidationResult();
+        }
+        return ((IValidator<T>)validator).Validate(value);
     }
 }
