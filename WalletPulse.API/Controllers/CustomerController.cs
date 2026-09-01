@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace WalletPulse.Controllers;
 
 [ApiController]
-public class CustomerController :Controller
+public class CustomerController : Controller
 {
     private readonly ICustomerRepository _customerRepository;
 
@@ -59,7 +59,7 @@ public class CustomerController :Controller
     {
         if (request == null)
         {
-            return BadRequest(new FinalResponse<object>() { StatusCode = 400,Message = "Customer data is invalid." });
+            return BadRequest(new FinalResponse<object>() { StatusCode = 400, Message = "Customer data is invalid." });
         }
         if (!ModelState.IsValid)
         {
@@ -83,7 +83,7 @@ public class CustomerController :Controller
     {
         if (request == null)
         {
-            return BadRequest(new FinalResponse<object>() { StatusCode = 400,Message = "Customer data is invalid." });
+            return BadRequest(new FinalResponse<object>() { StatusCode = 400, Message = "Customer data is invalid." });
         }
         if (!ModelState.IsValid)
         {
@@ -126,10 +126,10 @@ public class CustomerController :Controller
         }
 
         return Ok(new FinalResponse<string>
-            {
-                StatusCode = 200,
-                Message = "Customer deleted successfully",
-                Data = null
-            });
+        {
+            StatusCode = 200,
+            Message = "Customer deleted successfully",
+            Data = null
+        });
     }
 }

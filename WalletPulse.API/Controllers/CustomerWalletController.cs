@@ -19,7 +19,7 @@ public class CustomerWalletController : Controller
         _walletRepository = walletRepository;
         _walletService = walletService;
     }
-    
+
     //GET all Wallets
     [HttpGet(ApiEndpoints.CustomerWallet.GetAll)]
     public async Task<IActionResult> GetCustomerWallets(
@@ -46,7 +46,7 @@ public class CustomerWalletController : Controller
         };
         return Ok(response);
     }
-    
+
     //GET WalletByWalletsId
     [HttpGet(ApiEndpoints.CustomerWallet.Get)]
     public async Task<IActionResult> Get([FromRoute] Guid id, CancellationToken token)
@@ -60,7 +60,7 @@ public class CustomerWalletController : Controller
                 Message = "Wallet not found."
             });
         }
-        
+
         var customerResponse = new FinalResponse<CustomerWalletResponse>
         {
             StatusCode = 200,
@@ -69,14 +69,14 @@ public class CustomerWalletController : Controller
         };
         return Ok(customerResponse);
     }
-    
+
     //POST Wallet
     [HttpPost(ApiEndpoints.CustomerWallet.Create)]
     public async Task<IActionResult> CreateCustomerWallet([FromBody] CreateCustomerWalletRequest request, CancellationToken token)
     {
         if (request == null)
         {
-            return BadRequest(new FinalResponse<object>() { StatusCode = 400,Message = "Wallet data is invalid." });
+            return BadRequest(new FinalResponse<object>() { StatusCode = 400, Message = "Wallet data is invalid." });
         }
         if (!ModelState.IsValid)
         {
@@ -117,14 +117,14 @@ public class CustomerWalletController : Controller
         };
         return CreatedAtAction(nameof(Get), new { id = mapToWallet.Id }, walletResponse);
     }
-    
+
     //UPDATE Customer Wallet
     [HttpPut(ApiEndpoints.CustomerWallet.Update)]
     public async Task<IActionResult> UpdateCustomerWallet([FromRoute] Guid id, [FromBody] UpdateCustomerWalletRequest request, CancellationToken token)
     {
         if (request == null)
         {
-            return BadRequest(new FinalResponse<object>() { StatusCode = 400,Message = "Wallet data is invalid." });
+            return BadRequest(new FinalResponse<object>() { StatusCode = 400, Message = "Wallet data is invalid." });
         }
         if (!ModelState.IsValid)
         {
@@ -165,13 +165,13 @@ public class CustomerWalletController : Controller
                 Data = null
             });
         }
-        
+
         return Ok(new FinalResponse<string>
-            {
-                StatusCode = 200,
-                Message = "Customer wallet deleted successfully",
-                Data = null
-            });
+        {
+            StatusCode = 200,
+            Message = "Customer wallet deleted successfully",
+            Data = null
+        });
     }
 
     //POST Deposit
