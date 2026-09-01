@@ -69,23 +69,21 @@ public class CustomerWalletController : Controller
             return BadRequest(new FinalResponse<object> { StatusCode = 400, Message = "Validation failed.", Data = ModelState });
         }
 
-        var maxedWalletsReached = _walletService.HasReachedMaxWallets(request.CustomerId);
-        var accountWalletExists = _walletService.CustomerWalletExists(request.CustomerId, request.AccountNumber);
-        if (!maxedWalletsReached)
+        var maxedWalletsReached = await _walletService.HasReachedMaxWallets(request.CustomerId, token);
+        if (maxedWalletsReached)
         {
-            if (accountWalletExists)
+            var walletMaxedResponse = new FinalResponse<object>
             {
-                var mapToWallet = request.MapToWallet();
-                await _walletRepository.CreateCustomerWallet(mapToWallet ?? throw new InvalidOperationException(), token);
-                var walletResponse = new FinalResponse<CustomerWalletResponse>
-                {
-                    StatusCode = 201,
-                    Message = "Wallet created successfully.",
-                    Data = mapToWallet.MapsToResponse()
-                };
-                return CreatedAtAction(nameof(Get), new { id = mapToWallet.Id }, walletResponse);
-            }
-            
+                StatusCode = 400,
+                Message = "Customer already has 5 wallets on account.",
+                Data = null
+            };
+            return BadRequest(walletMaxedResponse);
+        }
+
+        var accountWalletExists = await _walletService.CustomerWalletExists(request.CustomerId, request.AccountNumber, token);
+        if (accountWalletExists)
+        {
             var walletExistsResponse = new FinalResponse<object>
             {
                 StatusCode = 400,
@@ -94,13 +92,16 @@ public class CustomerWalletController : Controller
             };
             return BadRequest(walletExistsResponse);
         }
-        var walletMaxedResponse = new FinalResponse<object>
+
+        var mapToWallet = request.MapToWallet();
+        await _walletRepository.CreateCustomerWallet(mapToWallet, token);
+        var walletResponse = new FinalResponse<CustomerWalletResponse>
         {
-            StatusCode = 400,
-            Message = "Customer already has 5 wallets on account.",
-            Data = null
+            StatusCode = 201,
+            Message = "Wallet created successfully.",
+            Data = mapToWallet.MapsToResponse()
         };
-        return BadRequest(walletMaxedResponse);
+        return CreatedAtAction(nameof(Get), new { id = mapToWallet.Id }, walletResponse);
     }
     
     //UPDATE Customer Wallet
