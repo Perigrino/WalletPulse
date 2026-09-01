@@ -53,13 +53,13 @@ public class CustomerWalletRepository : ICustomerWalletRepository
         return new WalletQueryResult(items, totalCount);
     }
 
-    public async Task<CustomerWallet?> GetWalletByWalletId(Guid walletId , CancellationToken token = default)
+    public async Task<CustomerWallet?> GetWalletByWalletId(Guid walletId, CancellationToken token = default)
     {
         return await _context.CustomerWallets
             .FirstOrDefaultAsync(wallet => wallet.Id == walletId, cancellationToken: token);
     }
 
-    public async Task<bool> CreateCustomerWallet(CustomerWallet wallet , CancellationToken token = default)
+    public async Task<bool> CreateCustomerWallet(CustomerWallet wallet, CancellationToken token = default)
     {
         await _context.AddAsync(wallet, token);
         return await Save(token);
@@ -99,14 +99,14 @@ public class CustomerWalletRepository : ICustomerWalletRepository
 
     public async Task<bool> WalletExists(Guid id, CancellationToken token = default)
     {
-        var wallet =  await _context.CustomerWallets
+        var wallet = await _context.CustomerWallets
             .AnyAsync(w => w.Id == id, cancellationToken: token);
         return wallet;
     }
 
     public async Task<bool> CustomerWalletExists(string accountNumber, CancellationToken token = default)
     {
-        var wallet =  await _context.CustomerWallets
+        var wallet = await _context.CustomerWallets
             .AnyAsync(an => an.AccountNumber == accountNumber, cancellationToken: token);
         return wallet;
     }
@@ -146,7 +146,7 @@ public class CustomerWalletRepository : ICustomerWalletRepository
 
     public async Task<bool> Save(CancellationToken token = default)
     {
-        var saved =  await _context.SaveChangesAsync(token);
+        var saved = await _context.SaveChangesAsync(token);
         return saved > 0;
     }
 }

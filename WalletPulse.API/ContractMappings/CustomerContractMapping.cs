@@ -17,11 +17,11 @@ public static class CustomerContractMapping
             Email = request.Email,
             PhoneNumber = request.PhoneNumber,
             Address = request.Address,
- 
+
         };
-    
+
     }
-    
+
     public static Customer MapToCustomer(this UpdateCustomerRequest request, Guid id) //This maps the UpdateCustomerDto to Customer
     {
         return new Customer()
@@ -35,7 +35,7 @@ public static class CustomerContractMapping
             BirthDate = DateTime.UtcNow
         };
     }
-    
+
     public static CustomerResponse MapsToResponse(this Customer customer) //This maps the Customer to CustomerResponse Dto
     {
         return new CustomerResponse
@@ -50,8 +50,8 @@ public static class CustomerContractMapping
             CustomerWallets = customer.CustomerWallets
         };
     }
-    
-    
+
+
     public static CustomersResponse MapsToResponse(this IEnumerable<Customer> customers) //This maps the list of customers to the CustomersResponses
     {
         return new CustomersResponse()

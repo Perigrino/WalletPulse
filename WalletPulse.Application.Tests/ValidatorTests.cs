@@ -12,8 +12,12 @@ public class ValidatorTests
         var validator = new CreateCustomerWalletRequestValidator();
         var model = new CreateCustomerWalletRequest
         {
-            WalletName = "Personal", Type = "crypto", AccountNumber = "0244",
-            AccountScheme = "MTN", CreatedAt = DateTime.UtcNow, Owner = "u1",
+            WalletName = "Personal",
+            Type = "crypto",
+            AccountNumber = "0244",
+            AccountScheme = "MTN",
+            CreatedAt = DateTime.UtcNow,
+            Owner = "u1",
             CustomerId = Guid.NewGuid()
         };
         var result = validator.TestValidate(model);
@@ -26,8 +30,12 @@ public class ValidatorTests
         var validator = new CreateCustomerWalletRequestValidator();
         var model = new CreateCustomerWalletRequest
         {
-            WalletName = "Personal", Type = "momo", AccountNumber = "0244",
-            AccountScheme = "MTN", CreatedAt = DateTime.UtcNow, Owner = "u1",
+            WalletName = "Personal",
+            Type = "momo",
+            AccountNumber = "0244",
+            AccountScheme = "MTN",
+            CreatedAt = DateTime.UtcNow,
+            Owner = "u1",
             CustomerId = Guid.NewGuid()
         };
         var result = validator.TestValidate(model);
@@ -58,8 +66,12 @@ public class ValidatorTests
         var validator = new CreateCustomerRequestValidator();
         var model = new CreateCustomerRequest
         {
-            FirstName = "John", LastName = "Doe", BirthDate = DateTime.UtcNow,
-            Email = "not-an-email", PhoneNumber = "+233200000001", Address = "Accra"
+            FirstName = "John",
+            LastName = "Doe",
+            BirthDate = DateTime.UtcNow,
+            Email = "not-an-email",
+            PhoneNumber = "+233200000001",
+            Address = "Accra"
         };
         var result = validator.TestValidate(model);
         result.ShouldHaveValidationErrorFor(x => x.Email);

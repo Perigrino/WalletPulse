@@ -17,7 +17,7 @@ public class CustomerRepository : ICustomerRepository
     public async Task<IEnumerable<Customer>> GetCustomerAsync(CancellationToken token = default)
     {
         var customers = await _context.Customers
-            .Include(wallets => wallets.CustomerWallets )
+            .Include(wallets => wallets.CustomerWallets)
             .ToListAsync(cancellationToken: token);
         return customers;
     }
@@ -46,9 +46,9 @@ public class CustomerRepository : ICustomerRepository
 
     public async Task<bool> UpdateCustomer(Customer customer, CancellationToken token = default)
     {
-        var result = await _context.Customers.FirstOrDefaultAsync(p => 
-            p.Id  == customer.Id, cancellationToken: token);
-        
+        var result = await _context.Customers.FirstOrDefaultAsync(p =>
+            p.Id == customer.Id, cancellationToken: token);
+
         if (result != null)
         {
             result.FirstName = customer.FirstName;
@@ -63,9 +63,9 @@ public class CustomerRepository : ICustomerRepository
 
     public async Task<bool> DeleteCustomer(Guid id, CancellationToken token = default)
     {
-        var result = await _context.Customers.FirstOrDefaultAsync(i => 
+        var result = await _context.Customers.FirstOrDefaultAsync(i =>
             i.Id == id, cancellationToken: token);
-        
+
         if (result == null)
         {
             return false; // Customer not found or already deleted
@@ -76,13 +76,13 @@ public class CustomerRepository : ICustomerRepository
 
     public async Task<bool> CustomerExists(Guid id, CancellationToken token = default)
     {
-        var customer =  await _context.Customers.AnyAsync(c => c.Id == id, cancellationToken: token);
+        var customer = await _context.Customers.AnyAsync(c => c.Id == id, cancellationToken: token);
         return customer;
     }
-    
+
     public async Task<bool> Save(CancellationToken token = default)
     {
-        var saved =  await _context.SaveChangesAsync(token);
+        var saved = await _context.SaveChangesAsync(token);
         return saved > 0;
     }
 }

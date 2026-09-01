@@ -20,7 +20,7 @@ public static class WalletContractMapping
             CustomerId = request.CustomerId
         };
     }
-    
+
     public static CustomerWallet MapToWallet(this UpdateCustomerWalletRequest request, Guid id)  //This maps the UpdateCustomerWalletDto to CustomerWallet
     {
         return new CustomerWallet
@@ -35,7 +35,7 @@ public static class WalletContractMapping
             CustomerId = request.CustomerId
         };
     }
-    
+
     public static CustomerWalletResponse MapsToResponse(this CustomerWallet wallet) //This maps the Customer to CustomerResponse Dto
     {
         return new CustomerWalletResponse
@@ -52,7 +52,7 @@ public static class WalletContractMapping
 
         };
     }
-    
+
     public static CustomerWalletsResponse MapsToResponse(this IEnumerable<CustomerWallet> wallets) //This maps the list of customers to the CustomersResponses
     {
         return new CustomerWalletsResponse()
