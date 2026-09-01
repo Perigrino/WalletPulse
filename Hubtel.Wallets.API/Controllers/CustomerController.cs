@@ -138,7 +138,7 @@ public class CustomerController :Controller
     [HttpDelete(ApiEndpoints.Customers.Delete)]
     public async Task<IActionResult> Delete(Guid id, CancellationToken token)
     {
-        await _customerRepository.CustomerExists(id);
+        await _customerRepository.CustomerExists(id, token);
         var deleteCustomer = await _customerRepository.DeleteCustomer(id, token);
         if (!deleteCustomer)
         {

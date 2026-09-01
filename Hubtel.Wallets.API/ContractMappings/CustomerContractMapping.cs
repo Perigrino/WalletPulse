@@ -22,7 +22,7 @@ public static class CustomerContractMapping
     
     }
     
-    public static Customer MapToCustomer(this UpdateCustomerRequest request, Guid id) //This maps the CreateCustomerDto to Customer
+    public static Customer MapToCustomer(this UpdateCustomerRequest request, Guid id) //This maps the UpdateCustomerDto to Customer
     {
         return new Customer()
         {
