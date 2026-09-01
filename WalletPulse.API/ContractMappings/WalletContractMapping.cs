@@ -49,6 +49,7 @@ public static class WalletContractMapping
             AccountScheme = wallet.AccountScheme,
             CreatedAt = wallet.CreatedAt,
             Owner = wallet.Owner,
+            Balance = wallet.Balance,
             CustomerId = wallet.CustomerId
 
         };

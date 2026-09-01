@@ -11,5 +11,7 @@ public interface ICustomerWalletRepository
     Task<bool> DeleteCustomerWallet(Guid walletId, CancellationToken token = default);
     Task<bool> WalletExists(Guid walletId, CancellationToken token = default);
     Task<bool> CustomerWalletExists(string accountNumber , CancellationToken token = default);
+    Task<CustomerWallet?> ApplyMovementAsync(Guid walletId, TransactionType type, decimal amount, string? reference, CancellationToken token = default);
+    Task<IEnumerable<Transaction>> GetWalletTransactionsAsync(Guid walletId, CancellationToken token = default);
     Task<bool> Save(CancellationToken token = default);
 }
