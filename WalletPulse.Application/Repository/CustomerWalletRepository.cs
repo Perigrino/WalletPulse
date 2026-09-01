@@ -61,19 +61,8 @@ public class CustomerWalletRepository : ICustomerWalletRepository
 
     public async Task<bool> CreateCustomerWallet(CustomerWallet wallet , CancellationToken token = default)
     {
-        var newWallet = new CustomerWallet
-        {
-            Id = Guid.NewGuid(),
-            WalletName = wallet.WalletName,
-            Type = wallet.Type,
-            AccountNumber = wallet.AccountNumber,
-            AccountScheme = wallet.AccountScheme,
-            CreatedAt = DateTime.UtcNow,
-            Owner = wallet.Owner,
-            CustomerId = wallet.CustomerId
-        };
-        await _context.AddAsync(newWallet, token);
-        return await Save();
+        await _context.AddAsync(wallet, token);
+        return await Save(token);
     }
 
     public async Task<bool> UpdateCustomerWallet(CustomerWallet wallet, CancellationToken token = default)

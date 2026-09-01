@@ -7,7 +7,7 @@ public class Transaction
     public required TransactionType Type { get; set; }
     public required decimal Amount { get; set; }
     public string? Reference { get; set; }
-    public required DateTime CreatedAt { get; set; }
+    public required DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }
 
 public enum TransactionType

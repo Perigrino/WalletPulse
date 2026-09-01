@@ -40,17 +40,7 @@ public class CustomerRepository : ICustomerRepository
 
     public async Task<bool> CreateCustomer(Customer customer, CancellationToken token = default)
     {
-        var newCustomer = new Customer()
-        {
-            Id = Guid.NewGuid(),
-            FirstName = customer.FirstName,
-            LastName = customer.LastName,
-            Address = customer.Address,
-            Email = customer.Email,
-            BirthDate = customer.BirthDate,
-            PhoneNumber = customer.PhoneNumber
-        };
-        await _context.AddAsync(newCustomer, token);
+        await _context.AddAsync(customer, token);
         return await Save(token);
     }
 

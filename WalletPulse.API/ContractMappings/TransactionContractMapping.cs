@@ -12,6 +12,6 @@ public static class TransactionContractMapping
         Type = transaction.Type.ToString(),
         Amount = transaction.Amount,
         Reference = transaction.Reference,
-        CreatedAt = transaction.CreatedAt
+        CreatedAt = transaction.CreatedAt.ToUniversalTime()
     };
 }
