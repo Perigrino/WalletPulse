@@ -14,8 +14,10 @@ public sealed class GlobalExceptionHandler : IExceptionHandler
 
     public async ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
-        _logger.LogError(exception, "Unhandled exception for {Method} {Path}",
-            httpContext.Request.Method, httpContext.Request.Path);
+        var method = httpContext.Request.Method.Replace("\r", "").Replace("\n", "");
+        var path = httpContext.Request.Path.ToString().Replace("\r", "").Replace("\n", "");
+
+        _logger.LogError(exception, "Unhandled exception for {Method} {Path}", method, path);
 
         httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
         await httpContext.Response.WriteAsJsonAsync(new ProblemDetails
